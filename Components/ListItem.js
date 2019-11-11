@@ -1,29 +1,46 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
+import NetworkImage from "react-native-image-progress";
+import ProgressPie from "react-native-progress/Pie";
 
-const ListItem = ({ item, children }) => (
-  <View style={styles.listItemContainer}>
+const ListItem = ({ item, children, marginVertical, editable, onPress }) => (
+  <View style={[styles.listItemContainer, { marginVertical }]}>
     <View style={styles.imageContainer}>
-      <Image source={require("../assets/icon.png")} style={styles.image} />
+      <TouchableOpacity
+        disabled={!editable}
+        style={{ flex: 1 }}
+        onPress={() => onPress(item)}
+      >
+        {item.image ? (
+          <NetworkImage
+            source={{ uri: item.image }}
+            style={styles.image}
+            indicator={ProgressPie}
+            indicatorProps={{
+              size: 40,
+              borderWidth: 0,
+              color: colors.logoColor,
+              unfilledColor: "rgba(200,200,200,0.2)"
+            }}
+            imageStyle={{ borderRadius: 35 }}
+          />
+        ) : (
+          <Image source={require("../assets/icon.png")} style={styles.image} />
+        )}
+      </TouchableOpacity>
     </View>
     <View style={styles.listItemTitleContainer}>
       <Text style={styles.listItemTitle}>{item.name}</Text>
     </View>
     {children}
-
-    {/* {item.read ? (
-      <Ionicons name="ios-checkmark" color={colors.logoColor} size={30} />
-    ) : (
-      <CustomActionButton
-        style={styles.markAsReadButton}
-        onPress={() => this.markAsRead(item, index)}
-      >
-        <Text style={styles.markAsReadButtonText}>Mark As Read</Text>
-      </CustomActionButton>
-    )} */}
   </View>
 );
+
+ListItem.defaultProps = {
+  marginVertical: 5,
+  editable: false
+};
 
 export default ListItem;
 
@@ -32,8 +49,7 @@ const styles = StyleSheet.create({
     minHeight: 100,
     flexDirection: "row",
     backgroundColor: colors.listItemBg,
-    alignItems: "center",
-    marginVertical: 5
+    alignItems: "center"
   },
   listItemTitleContainer: {
     flex: 1,

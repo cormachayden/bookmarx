@@ -8,6 +8,7 @@ import {
   TextInput,
   FlatList
 } from "react-native";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import WelcomeScreen from "./screens/AppSwitchNavigator/WelcomeScreen";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -25,6 +26,11 @@ import { firebaseConfig } from "./config/config";
 import BooksReadingScreen from "./screens/HomeTabNavigator/BooksReadingScreen";
 import BooksReadScreen from "./screens/HomeTabNavigator/BooksReadScreen";
 
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
+import BooksCountContainer from "./redux/containers/BooksCountContainer";
+
 // App Switch Navigator
 // - Welcome Screen
 //  - SignUpScreen
@@ -39,7 +45,13 @@ export default class App extends React.Component {
     firebase.initializeApp(firebaseConfig);
   };
   render() {
-    return <AppContainer />;
+    return (
+      <Provider store={store}>
+        <ActionSheetProvider>
+          <AppContainer />
+        </ActionSheetProvider>
+      </Provider>
+    );
   }
 }
 
@@ -71,19 +83,28 @@ const HomeTabNavigator = createBottomTabNavigator(
     HomeScreen: {
       screen: HomeScreen,
       navigationOptions: {
-        tabBarLabel: "Total Books"
+        tabBarLabel: "Total Books",
+        tabBarIcon: ({ tintColor }) => (
+          <BooksCountContainer color={tintColor} type="books" />
+        )
       }
     },
     BooksReadingScreen: {
       screen: BooksReadingScreen,
       navigationOptions: {
-        tabBarLabel: "Books Reading"
+        tabBarLabel: "Books Reading",
+        tabBarIcon: ({ tintColor }) => (
+          <BooksCountContainer color={tintColor} type="booksReading" />
+        )
       }
     },
     BooksReadScreen: {
       screen: BooksReadScreen,
       navigationOptions: {
-        tabBarLabel: "Books Read"
+        tabBarLabel: "Books Read",
+        tabBarIcon: ({ tintColor }) => (
+          <BooksCountContainer color={tintColor} type="booksRead" />
+        )
       }
     }
   },
